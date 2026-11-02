@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - name: Checkout
@@ -24,7 +24,7 @@ jobs:
         run: npm run verify
 
   e2e:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -42,4 +42,3 @@ jobs:
 
       - name: Extension end-to-end tests
         run: npm run test:e2e
-
