@@ -73,3 +73,4 @@ For security concerns, contact the maintainer privately rather than publishing e
 ## Project status
 
 Quill is under active development. Compatibility with third-party web editors is best-effort, and AI suggestions should be reviewed before accepting them.
+

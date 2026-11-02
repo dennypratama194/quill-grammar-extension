@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Quill",
+  "version": "2.2.0",
+  "description": "Quill — fix and rewrite English with AI, right where you type.",
+  "icons": { "16": "icons/icon-16.png", "32": "icons/icon-32.png", "48": "icons/icon-48.png", "128": "icons/icon-128.png" },
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": [
+    "https://api.anthropic.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["config.js", "diff.js", "editor-adapters.js", "content.js"],
+      "run_at": "document_idle",
+      "all_frames": true,
+      "match_about_blank": true,
+      "match_origin_as_fallback": true
+    }
+  ],
+  "commands": {
+    "quill-fix": {
+      "suggested_key": { "default": "Alt+Shift+F" },
+      "description": "Fix grammar in the selected text"
+    },
+    "quill-rewrite": {
+      "suggested_key": { "default": "Alt+Shift+R" },
+      "description": "Rewrite the selected text"
+    }
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": { "16": "icons/icon-16.png", "32": "icons/icon-32.png", "48": "icons/icon-48.png", "128": "icons/icon-128.png" }
+  }
+}
+

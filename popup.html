@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #08090e;
+      --surface: #0f1117;
+      --border: rgba(255,255,255,0.065);
+      --text: #eaeef4;
+      --muted: #7d8590;
+      --accent: #14c47a;
+      --accent-dk: #0fa362;
+      --red: #f05454;
+    }
+
+    body {
+      width: 320px;
+      padding: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .brand { display: flex; align-items: center; gap: 9px; margin-bottom: 16px; }
+    .brand-icon {
+      width: 28px; height: 28px; background: var(--accent); border-radius: 8px;
+      display: grid; place-items: center; box-shadow: 0 2px 10px rgba(20,196,122,0.35); flex-shrink: 0;
+    }
+    .brand-icon svg { width: 15px; height: 15px; }
+    .brand-name { font-size: 14px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+    .brand-name span { color: var(--accent); }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+    label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 5px; }
+
+    input, select {
+      width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text); font-size: 12px; outline: none;
+      transition: border-color 0.15s;
+    }
+    input { font-family: monospace; }
+    input:focus, select:focus { border-color: var(--accent); }
+
+    select {
+      font-family: inherit; cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'><path d='M1 1l4 4 4-4' stroke='%237d8590' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+      background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
+    }
+
+    .toggle-row { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; padding: 6px 0; }
+    .toggle-row input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--accent); cursor: pointer; margin: 0; }
+    .toggle-row .toggle-label { font-size: 12px; color: var(--text); flex: 1; }
+    .toggle-row .host { color: var(--accent); font-family: monospace; font-size: 11px; word-break: break-all; }
+
+    button {
+      margin-top: 8px; width: 100%; padding: 8px; background: var(--accent); color: #08090e;
+      border: none; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 13px;
+      transition: background 0.15s;
+    }
+    button:hover { background: var(--accent-dk); }
+    button.secondary { background: transparent; color: var(--muted); border: 1px solid var(--border); font-weight: 600; }
+    button.secondary:hover { color: var(--red); border-color: rgba(240,84,84,0.4); background: transparent; }
+    .saved-key { display: none; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; }
+    .saved-key.visible { display: flex; }
+    .saved-key code { flex: 1; font-family: monospace; color: var(--accent); }
+    .saved-key button { width: auto; margin-top: 0; padding: 4px 10px; font-size: 11px; }
+    button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+
+    .status { margin-top: 10px; font-size: 12px; padding: 8px 10px; border-radius: 6px; display: none; }
+    .success { background: rgba(20,196,122,0.1); color: var(--accent); border: 1px solid rgba(20,196,122,0.2); display: block; }
+    .error { background: rgba(240,84,84,0.1); color: var(--red); border: 1px solid rgba(240,84,84,0.2); display: block; }
+
+    .hint { margin-top: 8px; font-size: 11px; color: var(--muted); line-height: 1.55; }
+    .hint a { color: var(--accent); text-decoration: none; }
+    .privacy-note {
+      margin-top: 8px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
+      background: var(--surface); color: var(--muted); font-size: 10px; line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#08090e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 4C14 4 6 10 4 20"/>
+        <path d="M4 20c2-4 6-7 10-8"/>
+      </svg>
+    </div>
+    <div class="brand-name">Qui<span>ll</span></div>
+  </div>
+
+  <hr>
+
+  <label for="apiKeyInput">Anthropic API Key</label>
+  <div class="saved-key" id="savedKeyRow">
+    <code id="savedKeyMask"></code>
+    <button id="removeKeyBtn" type="button" class="secondary">Remove</button>
+  </div>
+  <input type="password" id="apiKeyInput" placeholder="sk-ant-..." autocomplete="off" spellcheck="false" />
+  <button id="saveBtn" type="button">Save Key</button>
+  <div class="status" id="status"></div>
+  <p class="privacy-note">The key is stored locally on this browser profile, not in Chrome Sync, and web pages cannot read it. Text you choose to fix or rewrite is sent to Anthropic. Nothing is sent until you click Fix or Rewrite or use a shortcut.</p>
+
+  <hr>
+
+  <label for="modelSelect">Model</label>
+  <select id="modelSelect"></select>
+
+  <label for="defaultModeSelect" style="margin-top: 12px;">Default mode</label>
+  <select id="defaultModeSelect">
+    <option value="grammar">Fix Grammar</option>
+    <option value="rewrite">Rewrite</option>
+  </select>
+  <p class="hint">Both actions still appear when text is selected. This only changes which one is primary.</p>
+
+  <label style="margin-top: 12px;">This site</label>
+  <label class="toggle-row">
+    <input type="checkbox" id="disableSiteToggle" />
+    <span class="toggle-label">Disable on <span class="host" id="hostLabel">this site</span></span>
+  </label>
+
+  <div class="status" id="settingsStatus"></div>
+
+  <p class="hint">
+    Get your API key at <a href="https://console.anthropic.com" target="_blank" rel="noreferrer">console.anthropic.com</a><br>
+    Select text in a supported editor, then choose Fix or Rewrite, or press Alt+Shift+F / Alt+Shift+R.
+  </p>
+
+  <script src="config.js"></script>
+  <script src="key-store.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
+
